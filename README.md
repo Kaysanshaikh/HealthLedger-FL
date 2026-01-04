@@ -156,7 +156,7 @@ Based on research from:
 
 For issues and questions:
 - GitHub Issues
-- Email: support@healthledger.com
+- Email: support@healthledgersynexai.com
 
 ---
 

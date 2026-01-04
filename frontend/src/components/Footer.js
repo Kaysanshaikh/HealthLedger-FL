@@ -15,8 +15,11 @@ const Footer = () => {
           <a href="/AboutPage" onClick={(e) => { e.preventDefault(); navigate('/AboutPage'); }} className="text-sm hover:underline">
             About Us
           </a>
-          <a href="#" onClick={(e) => e.preventDefault()} className="text-sm hover:underline">
+          <a href="/privacy" onClick={(e) => { e.preventDefault(); navigate('/privacy'); }} className="text-sm hover:underline">
             Privacy Policy
+          </a>
+          <a href="mailto:support@healthledgersynexai.com" className="text-sm hover:underline">
+            Support
           </a>
         </nav>
       </div>

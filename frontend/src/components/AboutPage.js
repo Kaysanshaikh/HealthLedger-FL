@@ -146,7 +146,7 @@ const AboutUs = () => {
           <h2 className="text-3xl font-bold mb-4 relative z-10">Ready to join the SynexAI network?</h2>
           <p className="text-muted-foreground mb-8 max-w-xl mx-auto relative z-10">Be part of the decentralized revolution in medical intelligence. Secure your node and start contributing to global breakthroughs.</p>
           <footer className="relative z-10">
-            <p className="text-muted-foreground">Inquiries & Partnerships: <a href="mailto:partners@synexai.com" className="text-primary font-semibold hover:underline">partners@synexai.com</a></p>
+            <p className="text-muted-foreground">Inquiries & Partnerships: <a href="mailto:support@healthledgersynexai.com" className="text-primary font-semibold hover:underline">support@healthledgersynexai.com</a></p>
           </footer>
         </motion.div>
       </div>

@@ -167,7 +167,7 @@ const DiagnosticRegistry = () => {
               </div>
               <div className="md:col-span-2 space-y-2">
                 <Label htmlFor="email">Email *</Label>
-                <Input id="email" name="email" type="email" placeholder="contact@citydiagnostics.com" required onChange={handleChange} />
+                <Input id="email" name="email" type="email" placeholder="contact@healthledgersynexai.com" required onChange={handleChange} />
               </div>
               <div className="md:col-span-2 space-y-2">
                 <Label htmlFor="hhNumber">HH Number (6-digit) *</Label>
