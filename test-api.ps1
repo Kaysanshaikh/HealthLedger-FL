@@ -1,5 +1,5 @@
 # Test FL API Endpoints
-Write-Host "🧪 Testing HealthLedger FL API" -ForegroundColor Green
+Write-Host "🧪 Testing HealthLedger SynexAI API" -ForegroundColor Green
 Write-Host ""
 
 $baseUrl = "http://localhost:5001"

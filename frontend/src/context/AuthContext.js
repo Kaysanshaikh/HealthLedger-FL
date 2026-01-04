@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
       console.log("✅ Wallet connected:", walletAddress);
 
       // 2. Create message to sign
-      const message = `Welcome to HealthLedger AI!\n\nSign this message to log in as a ${role}.\n\nWallet: ${walletAddress}`;
+      const message = `Welcome to HealthLedger SynexAI!\n\nSign this message to log in as a ${role}.\n\nWallet: ${walletAddress}`;
       const web3 = new Web3(window.ethereum);
 
       // 3. Sign message with timeout

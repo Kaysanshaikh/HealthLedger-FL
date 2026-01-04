@@ -39,7 +39,7 @@ const RegisterPage = () => {
     <div className="bg-background min-h-screen">
       <NavBar />
       <div className="container mx-auto flex flex-col items-center justify-center py-12 px-4">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Join HealthLedger</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-4">Join HealthLedger SynexAI</h1>
         <p className="text-muted-foreground mb-12">Choose your role to create a new account.</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
           <RegisterCard

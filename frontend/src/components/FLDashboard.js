@@ -236,15 +236,18 @@ function FLDashboard() {
         <div className="bg-background min-h-screen">
             <NavBarLogout />
             <div className="container mx-auto p-4 md:p-8">
-                <header className="mb-8">
-                    <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-                        <Brain className="h-8 w-8 text-primary" />
-                        Federated Learning Dashboard
-                    </h1>
-                    <p className="text-muted-foreground mt-2">
-                        Privacy-Preserving Collaborative ML for Healthcare
-                    </p>
-                </header>
+                <div className="flex items-center gap-4 mb-8 p-8 rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/20 shadow-2xl backdrop-blur-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Brain className="h-24 w-24 text-primary animate-pulse" />
+                    </div>
+                    <div className="relative z-10">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
+                            <Brain className="h-10 w-10 text-primary" />
+                            SynexAI Models
+                        </h1>
+                        <p className="text-muted-foreground text-lg font-medium mt-2">Manage and monitor global intelligence nodes across the SynexAI network.</p>
+                    </div>
+                </div>
 
                 {/* Notifications */}
                 {notification && (

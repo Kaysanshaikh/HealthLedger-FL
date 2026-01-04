@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "healthledger-federated-learning",
   "version": "2.0.0",
-  "description": "HealthLedger with Zero-Knowledge Federated Learning on Polygon",
+  "description": "HealthLedger SynexAI: Zero-Knowledge Federated Learning on Polygon",
   "main": "server.js",
   "scripts": {
     "clean": "hardhat clean",

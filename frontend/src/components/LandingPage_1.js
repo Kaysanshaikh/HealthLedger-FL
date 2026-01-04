@@ -38,7 +38,7 @@ function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Empowering Healthcare <br /> with Federated AI
+            Empowering Healthcare <br /> with SynexAI
           </motion.h1>
           <motion.p
             className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 leading-relaxed"
@@ -46,7 +46,7 @@ function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            HealthLedger AI combines Blockchain security with Zero-Knowledge Federated Learning to enable medical breakthroughs without ever compromising patient privacy.
+            HealthLedger SynexAI combines Blockchain security with Zero-Knowledge Federated Learning to enable medical breakthroughs without ever compromising patient privacy.
           </motion.p>
           <motion.div
             className="flex flex-col sm:flex-row gap-4 justify-center"

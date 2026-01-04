@@ -7,7 +7,7 @@ const teamMembers = [
   {
     name: "Kaysan Shaikh",
     role: "Team Leader & Lead Developer",
-    contribution: "Kaysan leads the end-to-end development of HealthLedger AI, architecting the integration between blockchain security and the Federated Learning framework. He oversees the entire system lifecycle.",
+    contribution: "Kaysan leads the end-to-end development of HealthLedger SynexAI, architecting the integration between blockchain security and the Federated Learning framework. He oversees the entire system lifecycle.",
     linkedin: "https://www.linkedin.com/in/kaysanshaikh/",
   },
   {
@@ -60,7 +60,7 @@ const TeamPage = () => {
         <header className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Our Team</h1>
           <p className="text-lg text-muted-foreground mt-2 max-w-3xl mx-auto">
-            The dedicated individuals behind HealthLedger AI.
+            The dedicated individuals behind HealthLedger SynexAI.
           </p>
         </header>
 

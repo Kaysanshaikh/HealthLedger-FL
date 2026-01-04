@@ -35,7 +35,7 @@ const NavBarLogout = () => {
             className="text-xl font-semibold cursor-pointer"
             onClick={() => navigate("/")}
           >
-            HealthLedger AI
+            HealthLedger SynexAI
           </span>
         </div>
 

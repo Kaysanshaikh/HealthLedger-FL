@@ -1,4 +1,5 @@
-# HealthLedger Federated Learning
+# HealthLedger SynexAI
+Privacy-Preserving Federated Learning for Healthcare
 
 > Zero-Knowledge Proof enabled Blockchain-Federated Learning for Healthcare
 
@@ -8,7 +9,7 @@
 
 ## 🌟 Overview
 
-HealthLedger FL is a production-ready federated learning system that enables multiple hospitals to collaboratively train disease prediction models without sharing raw patient data. Built on Polygon blockchain with zero-knowledge proofs for privacy preservation.
+HealthLedger SynexAI is a production-ready federated learning system that enables multiple hospitals to collaboratively train disease prediction models without sharing raw patient data. Built on Polygon blockchain with zero-knowledge proofs for privacy preservation.
 
 ### Key Features
 

@@ -1,7 +1,7 @@
 # Quick Production Setup Script
 # Run these commands to set up production environment
 
-Write-Host "🚀 HealthLedger FL - Production Setup" -ForegroundColor Green
+Write-Host "🚀 HealthLedger SynexAI - Production Setup" -ForegroundColor Green
 Write-Host ""
 
 # Step 1: Create .env file

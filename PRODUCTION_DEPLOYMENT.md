@@ -1,4 +1,4 @@
-# Production Deployment Guide - HealthLedger FL
+# Production Deployment Guide - HealthLedger SynexAI
 
 ## Prerequisites
 
