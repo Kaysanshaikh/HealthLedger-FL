@@ -67,39 +67,6 @@ async function trainLocalModel(disease, patientData, globalModel = null, config 
     }
 }
 
-/**
- * Simplified training for testing (without Python)
- * @param {string} disease - Disease type
- * @param {Array} patientData - Patient data
- * @returns {Object} Mock training result
- */
-function trainLocalModelSimplified(disease, patientData) {
-    console.log(`🏥 Training simplified ${disease} model...`);
-
-    // Mock training result
-    const mockWeights = {
-        layer1: Array(100).fill(0).map(() => Math.random() - 0.5),
-        layer2: Array(50).fill(0).map(() => Math.random() - 0.5),
-        output: Array(10).fill(0).map(() => Math.random() - 0.5)
-    };
-
-    const accuracy = 0.85 + Math.random() * 0.1; // 85-95%
-    const loss = 0.1 + Math.random() * 0.15;     // 0.1-0.25
-
-    return {
-        modelWeights: mockWeights,
-        accuracy,
-        loss,
-        samplesTrained: patientData.length,
-        trainingTime: Math.floor(Math.random() * 60) + 30, // 30-90 seconds
-        metrics: {
-            precision: accuracy + 0.02,
-            recall: accuracy - 0.01,
-            f1Score: accuracy
-        }
-    };
-}
-
 // ============================================
 // MODEL EVALUATION
 // ============================================
@@ -445,7 +412,6 @@ async function checkPythonBackend() {
 module.exports = {
     // Training
     trainLocalModel,
-    trainLocalModelSimplified,
     evaluateModel,
 
     // Aggregation

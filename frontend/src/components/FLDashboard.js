@@ -27,31 +27,9 @@ function FLDashboard() {
         avgAccuracy: 0,
         network: 'Polygon Amoy'
     });
-    const [showSimulationModal, setShowSimulationModal] = useState(false);
-    const [simSettings, setSimSettings] = useState({
-        baseAccuracy: 0.85,
-        variance: 0.05,
-        minSamples: 100,
-        maxSamples: 500
-    });
 
-    useEffect(() => {
-        const saved = localStorage.getItem('fl_sim_settings');
-        if (saved) {
-            try {
-                setSimSettings(JSON.parse(saved));
-            } catch (e) {
-                console.error("Failed to parse sim settings");
-            }
-        }
-    }, []);
 
-    const handleSaveSimSettings = (e) => {
-        e.preventDefault();
-        localStorage.setItem('fl_sim_settings', JSON.stringify(simSettings));
-        setShowSimulationModal(false);
-        alert("✅ Simulation settings updated!\nThese will now be used for all future synthetic training rounds.");
-    };
+
 
     useEffect(() => {
         fetchModels();
@@ -287,100 +265,6 @@ function FLDashboard() {
                             </form>
                         </CardContent>
                     </Card>
-                )}
-
-                {/* Dashboard Operations Console */}
-                <div className="mb-8 p-4 bg-muted/30 rounded-lg border border-dashed flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Activity className="h-5 w-5 text-primary animate-pulse" />
-                        <div>
-                            <p className="text-sm font-medium">Auto-Training Service</p>
-                            <p className="text-xs text-muted-foreground">Service status: <span className="text-green-500">Online</span></p>
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={() => setShowSimulationModal(true)}>
-                        <TrendingUp className="h-3.5 w-3.5 mr-2" />
-                        Configure Simulation
-                    </Button>
-                </div>
-
-                {/* Simulation Settings Modal */}
-                {showSimulationModal && (
-                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                        <Card className="w-full max-w-md border-primary/20 shadow-2xl animate-in zoom-in-95 duration-200">
-                            <CardHeader>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-primary">
-                                        <Activity className="h-5 w-5" />
-                                        <CardTitle>Simulation Research Settings</CardTitle>
-                                    </div>
-                                    <Button variant="ghost" size="icon" onClick={() => setShowSimulationModal(false)}>
-                                        <Activity className="h-4 w-4 rotate-45" /> {/* Close icon via rotation */}
-                                    </Button>
-                                </div>
-                                <CardDescription>Adjust global parameters for synthetic training rounds</CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <form onSubmit={handleSaveSimSettings} className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-muted-foreground">Base Accuracy</label>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                max="1"
-                                                className="w-full p-2 border rounded-md bg-background"
-                                                value={simSettings.baseAccuracy}
-                                                onChange={(e) => setSimSettings({ ...simSettings, baseAccuracy: parseFloat(e.target.value) })}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-muted-foreground">Variance (±)</label>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                min="0"
-                                                max="0.5"
-                                                className="w-full p-2 border rounded-md bg-background"
-                                                value={simSettings.variance}
-                                                onChange={(e) => setSimSettings({ ...simSettings, variance: parseFloat(e.target.value) })}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-muted-foreground">Min Samples</label>
-                                            <input
-                                                type="number"
-                                                className="w-full p-2 border rounded-md bg-background"
-                                                value={simSettings.minSamples}
-                                                onChange={(e) => setSimSettings({ ...simSettings, minSamples: parseInt(e.target.value) })}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-xs font-bold uppercase text-muted-foreground">Max Samples</label>
-                                            <input
-                                                type="number"
-                                                className="w-full p-2 border rounded-md bg-background"
-                                                value={simSettings.maxSamples}
-                                                onChange={(e) => setSimSettings({ ...simSettings, maxSamples: parseInt(e.target.value) })}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="bg-primary/5 p-3 rounded-md border border-primary/10">
-                                        <p className="text-xs text-muted-foreground">
-                                            <strong>Note:</strong> These settings only apply when real medical records are <strong>not</strong> selected.
-                                        </p>
-                                    </div>
-                                    <div className="flex gap-2 pt-2">
-                                        <Button type="button" variant="outline" className="flex-1" onClick={() => setShowSimulationModal(false)}>Cancel</Button>
-                                        <Button type="submit" className="flex-1">Save Research Params</Button>
-                                    </div>
-                                </form>
-                            </CardContent>
-                        </Card>
-                    </div>
                 )}
 
                 {/* FL Models Grid */}

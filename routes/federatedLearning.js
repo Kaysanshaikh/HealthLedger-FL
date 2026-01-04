@@ -123,7 +123,7 @@ router.get("/stats", async (req, res) => {
         const stats = {
             totalModels: parseInt(modelStats.rows[0].total_models) || 0,
             avgAccuracy: queryAvgAcc ? parseFloat(parseFloat(queryAvgAcc).toFixed(4)) * 100 : 0,
-            totalParticipants: (parseInt(participantStats.rows[0].total_participants) || 0) + 3
+            totalParticipants: parseInt(participantStats.rows[0].total_participants) || 0
         };
 
         res.json({

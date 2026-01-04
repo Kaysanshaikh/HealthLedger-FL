@@ -49,7 +49,5 @@ router.post("/:recordId/access", authMiddleware, recordsController.grantAccess);
 router.delete("/:recordId/access", authMiddleware, recordsController.revokeAccess);
 router.get("/:recordId/access", authMiddleware, recordsController.hasAccess);
 
-// Demo Intelligence Suite
-router.post("/seed-demo", recordsController.seedDemo);
 
 module.exports = router;
