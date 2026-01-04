@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import client from "../api/client";
+import client, { getBackendUrl } from '../api/client';
 import NavBar_Logout from "./NavBar_Logout";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
@@ -157,7 +157,7 @@ function ViewPatientRecords() {
                         onClick={() => {
                           // 🚨 DIRECT NAVIGATION: Links for viewing files must hit the backend port (5001) directly
                           // to bypass the React Router and allow the server to stream the file or placeholder.
-                          const backendUrl = 'http://localhost:5001/api';
+                          const backendUrl = getBackendUrl();
                           window.open(`${backendUrl}/records/file/${record.ipfs_cid}?token=${authToken}`, '_blank');
                         }}
                       >
