@@ -28,6 +28,7 @@ import Footer from "./components/Footer";
 import FLDashboard from "./components/FLDashboard";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import ScrollToTop from "./components/ScrollToTop";
+import ChatBot from "./components/ChatBot";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -187,6 +188,7 @@ const BrowseRouter = () => (
     <BrowserRouter>
       <ScrollToTop />
       <RoutesWithProtection />
+      <ChatBot />
       <Footer />
     </BrowserRouter>
   </AuthProvider>
