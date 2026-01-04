@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import NavBar from "./NavBar";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Linkedin } from 'lucide-react';
@@ -36,20 +37,26 @@ const teamMembers = [
   },
 ];
 
-const TeamMemberCard = ({ member }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>{member.name}</CardTitle>
-      <p className="text-sm text-muted-foreground">{member.role}</p>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground mb-4">{member.contribution}</p>
-      <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-2">
-        <Linkedin size={16} />
-        View LinkedIn
-      </a>
-    </CardContent>
-  </Card>
+const TeamMemberCard = ({ member, index }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.1 * index }}
+  >
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle>{member.name}</CardTitle>
+        <p className="text-sm text-muted-foreground">{member.role}</p>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">{member.contribution}</p>
+        <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-2">
+          <Linkedin size={16} />
+          View LinkedIn
+        </a>
+      </CardContent>
+    </Card>
+  </motion.div>
 );
 
 const TeamPage = () => {
@@ -58,15 +65,27 @@ const TeamPage = () => {
       <NavBar />
       <div className="container mx-auto p-4 md:p-8">
         <header className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Our Team</h1>
-          <p className="text-lg text-muted-foreground mt-2 max-w-3xl mx-auto">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl md:text-5xl font-bold tracking-tight"
+          >
+            Our Team
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg text-muted-foreground mt-2 max-w-3xl mx-auto"
+          >
             The dedicated individuals behind HealthLedger SynexAI.
-          </p>
+          </motion.p>
         </header>
 
         <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
-          {teamMembers.map((member) => (
-            <TeamMemberCard key={member.name} member={member} />
+          {teamMembers.map((member, index) => (
+            <TeamMemberCard key={member.name} member={member} index={index} />
           ))}
         </div>
       </div>
