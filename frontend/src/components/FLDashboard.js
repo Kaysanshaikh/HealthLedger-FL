@@ -73,6 +73,7 @@ function FLDashboard() {
         avgAccuracy: 0,
         network: 'Polygon Amoy'
     });
+    const [activeDashboardTab, setActiveDashboardTab] = useState('training'); // 'training' or 'ready'
 
     const fetchModelMetrics = async (modelId) => {
         try {
@@ -245,6 +246,25 @@ function FLDashboard() {
                     </p>
                 </header>
 
+                {/* Notifications */}
+                {notification && (
+                    <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                        <Alert variant={notification.type === 'error' ? 'destructive' : 'default'} className={notification.type === 'success' ? 'border-green-500/50 bg-green-500/10' : ''}>
+                            {notification.type === 'success' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <AlertCircle className="h-4 w-4" />}
+                            <AlertTitle>{notification.title}</AlertTitle>
+                            <AlertDescription>{notification.message}</AlertDescription>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-2 top-2 h-6 w-6 p-0"
+                                onClick={() => setNotification(null)}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </Alert>
+                    </div>
+                )}
+
                 {/* Statistics Cards */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
                     <Card>
@@ -352,16 +372,48 @@ function FLDashboard() {
                     </Card>
                 )}
 
-                {/* FL Models Grid */}
+                {/* Federated Models Section */}
                 <div className="mb-12">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
                         <div>
-                            <h2 className="text-3xl font-bold tracking-tight">Active Research Models</h2>
-                            <p className="text-muted-foreground">Monitor and manage global health intelligence models.</p>
+                            <h2 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">Federated Models</h2>
+                            <p className="text-muted-foreground text-lg">Manage and monitor global intelligence nodes.</p>
                         </div>
-                        <Button onClick={fetchModels} variant="ghost" size="sm">
+
+                        <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-xl border border-border/50 backdrop-blur-sm">
+                            <Button
+                                variant={activeDashboardTab === 'training' ? 'default' : 'ghost'}
+                                size="sm"
+                                className={`rounded-lg transition-all duration-300 ${activeDashboardTab === 'training' ? 'shadow-md' : ''}`}
+                                onClick={() => setActiveDashboardTab('training')}
+                            >
+                                <Activity className={`mr-2 h-4 w-4 ${activeDashboardTab === 'training' ? 'animate-pulse' : ''}`} />
+                                Live Training
+                                {models.filter(m => activeRounds[m.model_id]).length > 0 && (
+                                    <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-primary-foreground text-primary rounded-full font-bold">
+                                        {models.filter(m => activeRounds[m.model_id]).length}
+                                    </span>
+                                )}
+                            </Button>
+                            <Button
+                                variant={activeDashboardTab === 'ready' ? 'default' : 'ghost'}
+                                size="sm"
+                                className={`rounded-lg transition-all duration-300 ${activeDashboardTab === 'ready' ? 'shadow-md' : ''}`}
+                                onClick={() => setActiveDashboardTab('ready')}
+                            >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Ready for Rounds
+                                {models.filter(m => !activeRounds[m.model_id]).length > 0 && (
+                                    <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-full font-bold">
+                                        {models.filter(m => !activeRounds[m.model_id]).length}
+                                    </span>
+                                )}
+                            </Button>
+                        </div>
+
+                        <Button onClick={fetchModels} variant="outline" size="sm" className="hidden md:flex rounded-xl">
                             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                            Refresh System
+                            Sync Network
                         </Button>
                     </div>
                     {loading && <p className="text-center text-muted-foreground py-8">Loading models...</p>}
@@ -376,103 +428,110 @@ function FLDashboard() {
                     )}
 
                     {!loading && models.length > 0 && (
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {models.map((model, index) => (
-                                <Card key={index} className="flex flex-col">
-                                    <CardHeader className="pb-4">
-                                        <div className="flex items-center justify-between">
-                                            <CardTitle className="capitalize text-xl flex items-center gap-2">
-                                                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                                                {model.disease}
-                                            </CardTitle>
-                                            <div className="flex items-center gap-2">
-                                                <span className="px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-primary/10 text-primary border border-primary/20">
-                                                    {model.model_type.replace('_', ' ')}
-                                                </span>
-                                                {user?.role === 'admin' && (
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
-                                                        onClick={() => handleDeleteModel(model.model_id)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="flex-grow">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] text-muted-foreground uppercase font-semibold">Global Accuracy</p>
-                                                <p className="text-lg font-bold">
-                                                    {model.accuracy !== null ? `${(parseFloat(model.accuracy) * 100).toFixed(1)}%` : 'N/A'}
-                                                </p>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <p className="text-[10px] text-muted-foreground uppercase font-semibold">Current Round</p>
-                                                <p className="text-lg font-bold">{activeRounds[model.model_id]?.round_number || model.current_round || 0}</p>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4 pt-4 border-t border-border">
-                                            <p className="text-[10px] text-muted-foreground uppercase font-semibold mb-1">Model ID</p>
-                                            <p className="text-[11px] font-mono truncate bg-muted/50 p-1.5 rounded">{model.model_id}</p>
-                                        </div>
-                                    </CardContent>
-                                    <CardContent className="flex flex-col gap-3 pt-0">
-                                        <Button variant="outline" className="w-full text-xs" onClick={() => setSelectedModelForMetrics(model.model_id)}>
-                                            <TrendingUp className="mr-1.5 h-3.5 w-3.5" />
-                                            System Insights
-                                        </Button>
-
-                                        {activeRounds[model.model_id] ? (
-                                            <div className="space-y-2.5 p-3 rounded-xl bg-primary/5 border border-primary/10 shadow-inner">
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <Activity className="h-3 w-3 text-primary animate-pulse" />
-                                                        <span className="text-[10px] font-bold uppercase tracking-tight text-primary">Training Live</span>
-                                                    </div>
-                                                    <span className="px-1.5 py-0.5 rounded-md bg-white/50 text-[9px] font-mono border">
-                                                        ID:{activeRounds[model.model_id].round_id}
+                        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            {models
+                                .filter(m => activeDashboardTab === 'training' ? activeRounds[m.model_id] : !activeRounds[m.model_id])
+                                .map((model, index) => (
+                                    <Card key={index} className="flex flex-col">
+                                        <CardHeader className="pb-4">
+                                            <div className="flex items-center justify-between">
+                                                <CardTitle className="capitalize text-xl flex items-center gap-2">
+                                                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                                                    {model.disease}
+                                                </CardTitle>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="px-2 py-1 text-[10px] font-bold uppercase rounded-md bg-primary/10 text-primary border border-primary/20">
+                                                        {model.model_type.replace('_', ' ')}
                                                     </span>
-                                                </div>
-
-                                                <div className="bg-white/80 dark:bg-black/20 p-2 rounded-md border border-border/50 text-center">
-                                                    <p className="text-[10px] text-muted-foreground uppercase font-semibold">Active Round</p>
-                                                    <p className="text-sm font-bold">Round {activeRounds[model.model_id].round_number}</p>
-                                                </div>
-
-                                                <Button
-                                                    className="w-full font-bold shadow-lg"
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    disabled={trainingModels[model.model_id]}
-                                                    onClick={() => handleCompleteRound(model.model_id, activeRounds[model.model_id].round_id, activeRounds[model.model_id].round_number)}
-                                                >
-                                                    {trainingModels[model.model_id] ? (
-                                                        <><RefreshCw className="mr-2 h-3.5 w-3.5 animate-spin" /> Aggregating...</>
-                                                    ) : (
-                                                        'Complete Round'
+                                                    {user?.role === 'admin' && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 text-muted-foreground hover:text-destructive transition-colors"
+                                                            onClick={() => handleDeleteModel(model.model_id)}
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
                                                     )}
-                                                </Button>
+                                                </div>
                                             </div>
-                                        ) : (
-                                            <Button
-                                                className="w-full font-bold shadow-md h-10"
-                                                disabled={loading || trainingModels[model.model_id]}
-                                                onClick={() => handleInitiateRound(model.model_id)}
-                                            >
-                                                {trainingModels[model.model_id] ? (
-                                                    <><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Starting...</>
-                                                ) : (
-                                                    'Initiate Round 1'
-                                                )}
-                                            </Button>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            ))}
+                                        </CardHeader>
+                                        <CardContent className="flex-grow">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-1">
+                                                    <p className="text-[10px] text-muted-foreground uppercase font-semibold">Global Accuracy</p>
+                                                    <p className="text-lg font-bold">
+                                                        {model.accuracy !== null ? `${(parseFloat(model.accuracy) * 100).toFixed(1)}%` : 'N/A'}
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <p className="text-[10px] text-muted-foreground uppercase font-semibold">Current Round</p>
+                                                    <p className="text-lg font-bold">{activeRounds[model.model_id]?.round_number || model.current_round || 0}</p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-4 pt-4 border-t border-border">
+                                                <p className="text-[10px] text-muted-foreground uppercase font-semibold mb-1">Model ID</p>
+                                                <p className="text-[11px] font-mono truncate bg-muted/50 p-1.5 rounded">{model.model_id}</p>
+                                            </div>
+                                        </CardContent>
+                                        <CardContent className="flex flex-col gap-4 pt-2">
+                                            {activeRounds[model.model_id] ? (
+                                                <>
+                                                    <Button variant="outline" className="w-full text-xs h-9" onClick={() => setSelectedModelForMetrics(model.model_id)}>
+                                                        <BarChart2 className="mr-1.5 h-3.5 w-3.5" />
+                                                        View Performance
+                                                    </Button>
+
+                                                    <div className="flex items-center justify-between px-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="h-2 w-2 rounded-full bg-primary animate-ping" />
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-primary">Live Round {activeRounds[model.model_id].round_number}</span>
+                                                        </div>
+                                                        <span className="text-[9px] font-mono opacity-50">
+                                                            ID:{activeRounds[model.model_id].round_id}
+                                                        </span>
+                                                    </div>
+
+                                                    <Button
+                                                        className="w-full font-bold shadow-xl h-11 rounded-xl transition-all active:scale-95"
+                                                        variant="destructive"
+                                                        disabled={trainingModels[model.model_id]}
+                                                        onClick={() => handleCompleteRound(model.model_id, activeRounds[model.model_id].round_id, activeRounds[model.model_id].round_number)}
+                                                    >
+                                                        {trainingModels[model.model_id] ? (
+                                                            <><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Finalizing...</>
+                                                        ) : (
+                                                            'Complete Round'
+                                                        )}
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Button
+                                                        variant="outline"
+                                                        className="w-full text-xs h-9"
+                                                        onClick={() => setSelectedModelForMetrics(model.model_id)}
+                                                    >
+                                                        <BarChart2 className="mr-1.5 h-3.5 w-3.5" />
+                                                        View Performance
+                                                    </Button>
+
+                                                    <Button
+                                                        className="w-full font-black shadow-lg h-12 rounded-xl text-md transition-all active:scale-95 bg-gradient-to-r from-primary to-primary/80"
+                                                        disabled={loading || trainingModels[model.model_id]}
+                                                        onClick={() => handleInitiateRound(model.model_id)}
+                                                    >
+                                                        {trainingModels[model.model_id] ? (
+                                                            <><RefreshCw className="mr-2 h-5 w-5 animate-spin" /> Syncing Node...</>
+                                                        ) : (
+                                                            'Begin New Round'
+                                                        )}
+                                                    </Button>
+                                                </>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                ))}
                         </div>
                     )}
 
@@ -489,7 +548,7 @@ function FLDashboard() {
                                             <Activity className="h-5 w-5 text-primary" />
                                             Model Performance Insights
                                         </h3>
-                                        <p className="text-sm text-muted-foreground">Historical training metrics for <span className="text-primary font-semibold uppercase">{models.find(m => m.model_id === selectedModelForMetrics)?.disease}</span> research model</p>
+                                        <p className="text-sm text-muted-foreground">Historical training metrics for <span className="text-primary font-semibold uppercase">{models.find(m => m.model_id === selectedModelForMetrics)?.disease}</span> federated model</p>
                                     </div>
                                     <Button
                                         variant="ghost"
@@ -504,7 +563,7 @@ function FLDashboard() {
                                 {metricsLoading ? (
                                     <div className="flex flex-col h-[400px] items-center justify-center space-y-4">
                                         <RefreshCw className="h-10 w-10 animate-spin text-primary" />
-                                        <p className="text-muted-foreground animate-pulse text-sm font-medium">Synchronizing Research Data...</p>
+                                        <p className="text-muted-foreground animate-pulse text-sm font-medium">Synchronizing Node Data...</p>
                                     </div>
                                 ) : modelMetrics.length > 0 ? (
                                     <div className="grid gap-8 lg:grid-cols-2">
