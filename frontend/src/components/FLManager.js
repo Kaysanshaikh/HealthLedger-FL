@@ -3,7 +3,8 @@ import client from '../api/client';
 import { Button } from './ui/button';
 import { useAuth } from '../context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
-import { Brain, Users, TrendingUp, Shield, Plus, Minus, RefreshCw, Activity, Zap, FileText, Check, X, Trash2 } from 'lucide-react';
+import { Brain, Users, TrendingUp, Shield, Plus, Minus, RefreshCw, Activity, Zap, FileText, Check, X, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 
 const API_URL = '/fl';
 
@@ -36,6 +37,37 @@ const FLManager = () => {
         avgAccuracy: 0,
         network: 'Polygon Amoy'
     });
+    const [notification, setNotification] = useState(null);
+
+    // Auto-dismiss notification
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => {
+                setNotification(null);
+            }, 8000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
+
+    const showNotification = (type, title, message) => {
+        setNotification({ type, title, message });
+    };
+
+    const parseBlockchainError = (err) => {
+        const errorMsg = err.response?.data?.error || err.message || '';
+
+        // Handle common blockchain errors
+        if (errorMsg.includes('Already submitted')) return 'You have already contributed to this training round.';
+        if (errorMsg.includes('insufficient funds')) return 'Insufficient funds in wallet for gas fees.';
+        if (errorMsg.includes('user rejected')) return 'Transaction was rejected in wallet.';
+        if (errorMsg.includes('execution reverted')) {
+            // Try to extract reason from "execution reverted: reason"
+            const match = errorMsg.match(/execution reverted: "([^"]+)"/);
+            if (match) return match[1];
+        }
+
+        return errorMsg.length > 100 ? errorMsg.substring(0, 100) + '...' : errorMsg;
+    };
 
 
     const stats = useMemo(() => {
@@ -145,7 +177,7 @@ const FLManager = () => {
         } catch (err) {
             console.error('Failed to create model:', err);
             const errorMsg = err.response?.data?.error || "Model creation failed. Check console for details.";
-            alert(`❌ ${errorMsg}`);
+            showNotification('error', '❌ Loading Failed', parseBlockchainError(err));
         } finally {
             setLoading(false);
         }
@@ -243,7 +275,7 @@ const FLManager = () => {
             console.log('✅ Active round response:', activeRound);
 
             if (!activeRound) {
-                alert("⚠️ No active training round found for this model.");
+                showNotification('error', '⚠️ No Active Round', "No active training round found for this model.");
                 return;
             }
 
@@ -276,7 +308,7 @@ const FLManager = () => {
             });
 
             console.log('✅ Contribution successful!');
-            alert(`✅ Success!\n\nTraining completed on ${metrics.samplesTrained} health records.\nContributed to Round ID ${roundId}.`);
+            showNotification('success', '✅ Success!', `Training completed on ${metrics.samplesTrained} health records.`);
             setSelectedRecords([]); // Reset selection
             await fetchModels();
         } catch (err) {
@@ -287,7 +319,7 @@ const FLManager = () => {
                 status: err.response?.status
             });
             const errorMsg = err.response?.data?.error || err.message;
-            alert(`❌ Contribution Failed\n\n${errorMsg}`);
+            showNotification('error', '❌ Contribution Failed', parseBlockchainError(err));
         } finally {
             setTrainingModels(prev => ({ ...prev, [modelId]: false }));
         }
@@ -297,12 +329,12 @@ const FLManager = () => {
         try {
             setLoading(true);
             const res = await client.post(`${API_URL}/rounds/complete`, { roundId });
-            alert(`✅ Round ${roundId} completed and aggregated successfully!\nNew Avg Accuracy: ${(res.data.avgAccuracy * 100).toFixed(1)}%`);
+            showNotification('success', '✅ Success!', `Round ${roundId} completed and aggregated successfully!`);
             await fetchModels();
         } catch (err) {
             console.error('Failed to complete round:', err);
             const errorMsg = err.response?.data?.error || err.message;
-            alert(`❌ Round Completion Failed\n\n${errorMsg}`);
+            showNotification('error', '❌ Round Completion Failed', parseBlockchainError(err));
         } finally {
             setLoading(false);
         }
@@ -314,12 +346,12 @@ const FLManager = () => {
         try {
             setLoading(true);
             await client.delete(`${API_URL}/models/${modelId}`);
-            alert("✅ Model deleted successfully.");
+            showNotification('success', '✅ Success!', "Model deleted successfully.");
             await fetchModels();
         } catch (err) {
             console.error('Failed to delete model:', err);
             const errorMsg = err.response?.data?.error || err.message;
-            alert(`❌ Deletion Failed\n\n${errorMsg}`);
+            showNotification('error', '❌ Deletion Failed', parseBlockchainError(err));
         } finally {
             setLoading(false);
         }
@@ -340,6 +372,34 @@ const FLManager = () => {
                 </h2>
                 <p className="text-muted-foreground">Privacy-Preserving Collaborative Research</p>
             </header>
+
+            {/* Inline Notifications */}
+            {notification && (
+                <Alert
+                    variant={notification.type === 'error' ? 'destructive' : 'default'}
+                    className={`mb-6 border-l-4 ${notification.type === 'error' ? 'border-l-destructive' : 'border-l-primary'} animate-in fade-in slide-in-from-top-4 duration-300`}
+                >
+                    <div className="flex items-center gap-3">
+                        {notification.type === 'error' ? (
+                            <AlertCircle className="h-5 w-5" />
+                        ) : (
+                            <CheckCircle2 className="h-5 w-5 text-primary" />
+                        )}
+                        <div>
+                            <AlertTitle className="font-bold">{notification.title}</AlertTitle>
+                            <AlertDescription className="text-sm opacity-90">
+                                {notification.message}
+                            </AlertDescription>
+                        </div>
+                        <button
+                            onClick={() => setNotification(null)}
+                            className="ml-auto p-1 hover:bg-muted rounded-full transition-colors"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    </div>
+                </Alert>
+            )}
 
             {/* Statistics Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">

@@ -5,7 +5,8 @@ import NavBarLogout from './NavBar_Logout';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { useAuth } from '../context/AuthContext';
-import { Brain, Users, TrendingUp, Shield, Plus, Minus, RefreshCw, Activity, Trash2 } from 'lucide-react';
+import { Brain, Users, TrendingUp, Shield, Plus, Minus, RefreshCw, Activity, Trash2, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 
 const API_URL = '/fl';
 
@@ -19,6 +20,33 @@ function FLDashboard() {
         disease: 'diabetes',
         modelType: 'logistic_regression'
     });
+    const [notification, setNotification] = useState(null);
+
+    // Auto-dismiss notification
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => {
+                setNotification(null);
+            }, 8000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
+
+    const showNotification = (type, title, message) => {
+        setNotification({ type, title, message });
+    };
+
+    const parseBlockchainError = (err) => {
+        const errorMsg = err.response?.data?.error || err.message || '';
+        if (errorMsg.includes('Already submitted')) return 'This round already has a contribution from this participant.';
+        if (errorMsg.includes('insufficient funds')) return 'Insufficient funds in wallet for gas fees.';
+        if (errorMsg.includes('user rejected')) return 'Transaction was rejected in wallet.';
+        if (errorMsg.includes('execution reverted')) {
+            const match = errorMsg.match(/execution reverted: "([^"]+)"/);
+            if (match) return match[1];
+        }
+        return errorMsg.length > 100 ? errorMsg.substring(0, 100) + '...' : errorMsg;
+    };
     const [trainingModels, setTrainingModels] = useState({});
     const [activeRounds, setActiveRounds] = useState({});
     const [globalStats, setGlobalStats] = useState({
@@ -79,7 +107,7 @@ function FLDashboard() {
         } catch (err) {
             console.error('Failed to create model:', err);
             const errorMsg = err.response?.data?.error || "Model creation failed. Check console for details.";
-            alert(`❌ ${errorMsg}`);
+            showNotification('error', '❌ Model creation failed', parseBlockchainError(err));
         } finally {
             setLoading(false);
         }
@@ -95,13 +123,13 @@ function FLDashboard() {
             const roundId = startRes.data.roundId;
 
             console.log(`✅ Round ${roundId} initiated successfully`);
-            alert(`✅ Success!\n\nTraining Round ID ${roundId} (Model Round ${startRes.data.round.roundNumber}) successfully initiated!\n\nParticipants can now contribute to this round.`);
+            showNotification('success', '✅ Success!', `Round ID ${roundId} successfully initiated!`);
 
             await fetchModels(); // This will also refresh active rounds
         } catch (err) {
             console.error('Round initiation failed:', err);
             const errorMsg = err.response?.data?.error || err.message;
-            alert(`❌ Failed to Initiate Round\n\n${errorMsg}`);
+            showNotification('error', '❌ Initiation Failed', parseBlockchainError(err));
         } finally {
             setTrainingModels(prev => ({ ...prev, [modelId]: false }));
         }
@@ -118,12 +146,12 @@ function FLDashboard() {
 
             await client.post(`${API_URL}/rounds/complete`, { roundId });
 
-            alert(`✅ Success!\n\nRound ID ${roundId} (Model Round ${roundNumber}) has been completed and models have been aggregated.`);
+            showNotification('success', '✅ Success!', `Round ${roundId} has been completed and aggregated.`);
             await fetchModels(); // Refresh to show updated status
         } catch (err) {
             console.error('Complete round failed:', err);
             const errorMsg = err.response?.data?.error || err.message;
-            alert(`❌ Failed to Complete Round\n\n${errorMsg}`);
+            showNotification('error', '❌ Round Failed', parseBlockchainError(err));
         } finally {
             setTrainingModels(prev => ({ ...prev, [modelId]: false }));
         }
@@ -135,12 +163,12 @@ function FLDashboard() {
         try {
             setLoading(true);
             await client.delete(`${API_URL}/models/${modelId}`);
-            alert("✅ Model deleted successfully.");
+            showNotification('success', '✅ Success!', "Model deleted successfully.");
             await fetchModels();
         } catch (err) {
             console.error('Failed to delete model:', err);
             const errorMsg = err.response?.data?.error || err.message;
-            alert(`❌ Deletion Failed\n\n${errorMsg}`);
+            showNotification('error', '❌ Deletion Failed', parseBlockchainError(err));
         } finally {
             setLoading(false);
         }
